@@ -3,13 +3,30 @@
 $apiUser = $_POST['userApi'];
 $apiKey = $_POST['keyApi'];
 
-function 	add_product($data)
+function 	sort_info($data, $conn, $tmp)
 {
-	$result = mysql_query('INSERT INTO `llx_product`(`rowid`, `ref`, `entity`, `datec`, `tms`, `description`, `price`, `url`, `weight`) VALUES ($data["product_id"],$data["name"],$data["sku"], $data["created_at"],$data["updated_at"],$data["description"],$data["price"],$data["url_key"],$data["weight"])');
-	if (!$result)
-	{
- 	   die('Requête invalide : ' . mysql_error());
-	}
+	$rowid = intval($data['product_id']);
+	$array = explode("'", $data['name']);
+	if ($array)
+		$name = implode(" ", $array);
+	else
+		$name = $data['name'];
+	$entity = $tmp;
+	//$datec = date_create_From_Format('Y-m-d H:i:s', $data['created_at']);
+	//$tms = $data['updated_at'];
+//	$description = $data['description'];
+	$label = $data['type_id'];
+	$price = (double)$data['price'];
+	$url = $data['url_path'];
+	$weight = (float)$data['weight'];
+
+	$query = "INSERT INTO llx_product (rowid, ref, entity, label, price, url, weight) VALUES ($rowid, '$name', '$entity', '$label', $price, '$url', $weight)";
+	
+	//echo $query;
+	if (!$conn->query($query))
+	    echo "query error";
+	else
+		echo "\nquery success";
 }
 
 function 	connection_db()
@@ -23,7 +40,7 @@ function 	connection_db()
 	    $conn = new PDO("mysql:host=$servername;dbname=dolibarr", $username, $password);
 	    // set the PDO error mode to exception
 	    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	    echo "Connected successfully";
+	    return $conn;
 	}
 	catch(PDOException $e)
 	{
@@ -33,23 +50,20 @@ function 	connection_db()
 
 if (!empty($apiUser) && !empty($apiKey))
 {
+	$tmp = 0;
 	$client = new SoapClient('http://127.0.0.1/magento/api/v2_soap/?wsdl'); // TODO : change url
 	$sessionId = $client->login($apiUser, $apiKey); // TODO : change login and pwd if necessary
-	connection_db();
+	$conn = connection_db();
 	$products = $client->catalogProductList($sessionId);
-	$i = 0;
 	foreach ($products as $productObj)
 	{
     	$product = get_object_vars($productObj);
-    	$infos = $client->catalogProductInfo($sessionId, $product["product_id"]);
-    	//add_product($infos);
-    	var_dump($infos);
-    	break ;
-    	//print_r($product);
-    	//echo $i;
-    	//$i++;
+    	$infos = $client->catalogProductInfo($sessionId, $product['product_id']);
+    	$info = get_object_vars($infos);
+    	//var_dump($infos);
+    	sort_info($info, $conn, $tmp);
+    	$tmp++;
 	}
-	//var_dump($products);
 }
 else
 	echo "Try again !";
