@@ -231,9 +231,13 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" >
    <body>		
 		<form action="scripts/form.php" method="post">
-				API User: <input type="text" name="userApi" /><br>
-				API KEY : <input type="text" name="keyApi" /><br>
-				<input type="submit" value="GO" />
+			<input type="submit" name="products" value="Produits" />
+		</form>
+		<form action="scripts/form.php" method="post">
+			<input type="submit" name="categories" value="Catégories" />
+		</form>
+		<form action="scripts/form.php" method="post">
+			<input type="submit" name="customers" value="Clients" />
 		</form>
    </body>
 </html>
