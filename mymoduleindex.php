@@ -239,6 +239,9 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 		<form action="scripts/form.php" method="post">
 			<input type="submit" name="customers" value="Clients" />
 		</form>
+		<form action="scripts/form.php" method="post">
+			<input type="submit" name="cat_prod" value="Catégories/Produits" />
+		</form>
    </body>
 </html>
 

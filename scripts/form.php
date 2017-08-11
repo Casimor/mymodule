@@ -3,6 +3,7 @@
 include_once 'categories.php';
 include_once 'produits.php';
 include_once 'customers.php';
+include_once 'categorie_products.php';
 
 $apiUser = "soapuser";
 $apiKey = "azerty123";
@@ -21,4 +22,6 @@ else
         get_categories($client, $sessionId, $apiUser, $apiKey);
     elseif (isset($_POST['customers']))
         get_customers($client, $sessionId);
+    elseif (isset($_POST['cat_prod']))
+        categories_products_link($client, $sessionId);
 }
