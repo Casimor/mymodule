@@ -3,6 +3,8 @@
 include_once "functions.php";
 include_once "create_client.php";
 
+//WIP
+
 function    get_rowid_client($id, $conn)
 {
     $ret = $conn->prepare("SELECT rowid FROM llx_societe WHERE nom='$id'");
