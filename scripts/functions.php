@@ -17,9 +17,10 @@ function    connection_db($dbname)
     }
 }
 
-function    get_rowid($id, $table_n, $where, $conn)
+function    get_rowid($id, $table, $where, $conn)
 {
-    $ret = $conn->prepare("SELECT rowid FROM '$table_n' WHERE '$where'='$id'");
+    $query = "SELECT rowid FROM ".$table." WHERE ".$where."='$id'";
+    $ret = $conn->prepare($query);
     $ret->execute();
     $result = $ret->fetchAll(PDO::FETCH_COLUMN, 0);
     return $result[0];

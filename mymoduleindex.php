@@ -246,7 +246,7 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 			<input type="submit" name="stock" value="Stock" />
 		</form>
 		<form action="scripts/form.php" method="post">
-			<input type="submit" name="price" value="Prix" />
+			<input type="submit" name="order" value="Commandes" />
 		</form>
    </body>
 </html>

@@ -2,7 +2,7 @@
 
 include_once 'functions.php';
 
-function    customer_info($client, $sessionId)
+function    customer_info($client, $sessionId, $customer_id)
 {
         $customerInfo = $client->customerCustomerInfo($sessionId, $customer_id);
         $customerInfo = (array) $customerInfo;
@@ -23,11 +23,11 @@ function    get_customers($client, $sessionId)
         $nom = $firstname.' '.$lastname;
         $customer_id = $customer['customer_id'];  // insert into ref_ext
         $email = $customer['email'];
-
-        $created_at = customer_info($client, $sessionId);  // insert into datec
+        $created_at = customer_info($client, $sessionId, $customer_id);  // insert into datec
   
-        $customerAddress = $client->customerAddressList($sessionId, $customer_id);
-        $customerAddress = (array) $customerAddress[0];
+        $customerRet = $client->customerAddressList($sessionId, $customer_id);
+        
+        $customerAddress = (array) $customerRet[0];
         $street = $customerAddress['street'];  // insert into address
         $zip = $customerAddress['postcode'];
         $city = $customerAddress['city'];  // insert into town
@@ -35,19 +35,8 @@ function    get_customers($client, $sessionId)
         $country_code = $customerAddress['country_id'];
         $telephone = $customerAddress['telephone'];
 
-        $req_department_id = $conn->prepare('SELECT rowid FROM llx_c_departements WHERE nom = :region');
-        $req_department_id->bindParam(':region', $region, PDO::PARAM_STR);    
-        $req_department_id->execute();
-        $reponse_department_id = $req_department_id->fetch(PDO::FETCH_ASSOC);
-        $req_department_id->closeCursor();
-        $department_id = $reponse_department_id['rowid'];
-
-        $req_country_id = $conn->prepare('SELECT rowid FROM llx_c_country WHERE code = :country_code');
-        $req_country_id->bindParam(':country_code', $country_code, PDO::PARAM_STR);
-        $req_country_id->execute();
-        $reponse_country_id = $req_country_id->fetch(PDO::FETCH_ASSOC);
-        $req_country_id->closeCursor();
-        $country_id = $reponse_country_id['rowid'];
+        $department_id = get_rowid($region, "llx_c_departements", "nom", $conn);
+        $country_id = get_rowid($country_code, "llx_c_country", "code", $conn);
 
         // fk_typent = 8 
         // client = 1

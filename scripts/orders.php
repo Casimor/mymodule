@@ -35,7 +35,7 @@ function    get_client($data, $client, $sessionId, $conn)
 
 }
 
-function    get_price($client, $sessionId)
+function    get_orders($client, $sessionId)
 {
     $conn = connection_db("dolibarr");
     $orders = $client->salesOrderList($sessionId, null);
@@ -45,7 +45,7 @@ function    get_price($client, $sessionId)
         $order = get_object_vars($orderObj);
         $infos = $client->salesOrderInfo($sessionId, $order['increment_id']);
         $info = get_object_vars($infos);
-        var_dump($info);
+        //var_dump($info);
         get_client($info, $client, $sessionId, $conn);
         break ;
     }

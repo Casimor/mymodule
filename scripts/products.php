@@ -4,7 +4,6 @@ include_once 'functions.php';
 
 function 	insert_product($data, $conn)
 {
-
     $ref = $data['product_id'];
     $ref_ext = $data['sku'];
     $label = $data['name'];
@@ -23,8 +22,6 @@ function 	insert_product($data, $conn)
         $weight = (float)$data['weight'];
 
     $query = "INSERT INTO llx_product (ref, ref_ext, label, price, url, weight, tosell, tobuy) VALUES ('$ref', '$ref_ext', :label, '$price', '$url', '$weight', 1, 1)";
-    
-    
     
     $req = $conn->prepare($query);
     $req->execute(array('label' => $label));
