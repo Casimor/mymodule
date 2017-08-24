@@ -2,6 +2,11 @@
 
 include_once 'functions.php';
 
+/*
+** Import the quantity of products from Magento to Dolibarr
+** Fill llx_product_stock
+*/
+
 function    create_stock($data, $conn)
 {
     $fk_product = get_rowid($data['product_id'], "llx_product", "ref", $conn);
@@ -11,7 +16,6 @@ function    create_stock($data, $conn)
     querysql($conn, $query);
 }
 
-
 function    get_stocks($client, $sessionId)
 {
     $conn = connection_db("dolibarr");
@@ -19,7 +23,7 @@ function    get_stocks($client, $sessionId)
     querysql($conn, "ALTER TABLE llx_product_stock AUTO_INCREMENT = 1");
     foreach ($products as $productObj)
     {
-        $product = get_object_vars($productObj);
+        $product = (array) $productObj;
         $infos = $client->catalogInventoryStockItemList($sessionId, array($product['product_id'], $product['sku']));
         $info = get_object_vars($infos[0]);
         create_stock($info, $conn);

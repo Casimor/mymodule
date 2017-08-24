@@ -2,10 +2,14 @@
 
 include_once 'functions.php';
 
+/*
+** Import clients from Magento to Dolibarr
+** Fill llx_societe
+*/
+
 function    customer_info($client, $sessionId, $customer_id)
 {
-        $customerInfo = $client->customerCustomerInfo($sessionId, $customer_id);
-        $customerInfo = (array) $customerInfo;
+        $customerInfo = (array) $client->customerCustomerInfo($sessionId, $customer_id);
         return $customerInfo['created_at'];  // return into datec
 }
 

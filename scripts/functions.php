@@ -1,5 +1,11 @@
 <?php
 
+/*
+** connection_db 
+**
+** Connect to $dbname
+*/
+
 function    connection_db($dbname)
 {
     $servername = "localhost";
@@ -17,6 +23,12 @@ function    connection_db($dbname)
     }
 }
 
+/*
+** get_rowid
+** 
+** Return the rowid of the $table where $where = $id
+*/
+
 function    get_rowid($id, $table, $where, $conn)
 {
     $query = "SELECT rowid FROM ".$table." WHERE ".$where."='$id'";
@@ -25,6 +37,12 @@ function    get_rowid($id, $table, $where, $conn)
     $result = $ret->fetchAll(PDO::FETCH_COLUMN, 0);
     return $result[0];
 }
+
+/*
+** querysql
+**
+** execute the query
+*/
 
 function    querysql($conn, $query)
 {

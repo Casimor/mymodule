@@ -2,6 +2,11 @@
 
 include_once 'functions.php';
 
+/*
+** Make the connection between categorie and product
+** Fill llx_categorie_product
+*/
+
 function    insert_cat_prod($conn, $info)
 {
     $id_prod = $info['product_id'];
@@ -20,9 +25,8 @@ function    categories_products_link($client, $sessionId)
     $products = $client->catalogProductList($sessionId);
     foreach ($products as $productObj)
     {
-        $product = get_object_vars($productObj);
-        $infos = $client->catalogProductInfo($sessionId, $product['product_id']);
-        $info = get_object_vars($infos);
+        $product = (array) $productObj;
+        $info = (array) $client->catalogProductInfo($sessionId, $product['product_id']);
         insert_cat_prod($conn, $info);
     }
     $conn = null;

@@ -2,24 +2,27 @@
 
 include_once 'functions.php';
 
-function 	get_ids()
+/*
+** Import categories from Magento to Dolibarr
+** Fill llx_categorie
+*/
+
+function 	get_ids($client, $sessionId)
 {
-	$conn = connection_db("magento");
-	$id_col = $conn->prepare("SELECT entity_id from catalog_category_flat_store_1");
-	$id_col->execute();
-	$result = $id_col->fetchAll(PDO::FETCH_COLUMN, 0);
-	$conn = null;
-	return $result;
+	$root = (array) $client->catalogCategoryTree($sessionId);
+  	$infos = (array) $client->catalogCategoryInfo($sessionId, $root['category_id']);
+  	$ids = explode(',', $infos['all_children']);
+  	return $ids;
 }
 
 function 	insert_categorie($info, $conn)
 {
 	$id_ext = $info['category_id'];
+	$label = $info['name'];
 	if ($info['parent_id'] == 1)
 		$fk_parent = 0;
 	else
 		$fk_parent = get_rowid($info['parent_id'], "llx_categorie", "id_ext", $conn);
-	$label = $info['name'];
 
 	$query = "INSERT INTO llx_categorie (id_ext, visible, fk_parent, label, type) VALUES ('$id_ext', 0, '$fk_parent', '$label', 0)";
 
@@ -28,15 +31,14 @@ function 	insert_categorie($info, $conn)
 
 function 	get_categories($client, $sessionId)
 {
-	$ids = get_ids();
+	$ids = get_ids($client, $sessionId);
 	$conn = connection_db("dolibarr");
 	querysql($conn, "ALTER TABLE llx_categorie AUTO_INCREMENT = 1");
 	foreach ($ids as $index => $id)
 	{
 		if ($index == 0)
 			continue ;
-  		$infos = $client->catalogCategoryInfo($sessionId, $id);
-    	$info = get_object_vars($infos);
+	  	$info = (array) $client->catalogCategoryInfo($sessionId, $id);
 		insert_categorie($info, $conn);
 	}
 	$conn = null;
