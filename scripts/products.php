@@ -37,12 +37,17 @@ function 	get_products($client, $sessionId)
 	$conn = connection_db("dolibarr");
 	$products = $client->catalogProductList($sessionId);
 	querysql($conn, "ALTER TABLE llx_product AUTO_INCREMENT = 1");
+    $i = 0;
 	foreach ($products as $productObj)
 	{
+        if ($i > 10)
+            break ;
         $product = (array) $productObj;
     	$info = $client->catalogProductInfo($sessionId, $product['product_id']);
         $info = (array) $info;
         insert_product($info, $conn);
-	}
+        $i += 1;
+
+    }
 	$conn = null;
 }

@@ -8,7 +8,7 @@ include_once 'stock.php';
 include_once 'orders.php';
 
 $apiUser = "soapuser";
-$apiKey = "azerty123";
+$apiKey = "s0d3z1gn";
 
 if (empty($apiUser) && empty($apiKey))
 {
@@ -16,15 +16,19 @@ if (empty($apiUser) && empty($apiKey))
 }
 else
 {
-    $client = new SoapClient('http://127.0.0.1/magento/api/v2_soap/?wsdl');
+
+
+    $wsdlUrl = 'https://erp.sodezign.com/index.php/api/v2_soap/index/wsdl/1/';
+    $client = new SoapClient($wsdlUrl);
     $sessionId = $client->login($apiUser, $apiKey);
     if (isset($_POST['products']))
     {
+        echo "Ok";
         get_products($client, $sessionId);
-        get_categories($client, $sessionId);
-        get_customers($client, $sessionId);
-        categories_products_link($client, $sessionId);
-        get_stocks($client, $sessionId);
+        //get_categories($client, $sessionId);
+        //get_customers($client, $sessionId);
+        //categories_products_link($client, $sessionId);
+        //get_stocks($client, $sessionId);
         //get_orders($client, $sessionId);
     }
 }
