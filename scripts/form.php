@@ -7,6 +7,8 @@ include_once 'categorie_products.php';
 include_once 'stock.php';
 include_once 'orders.php';
 
+setlocale(LC_CTYPE, 'fr_FR');
+
 $apiUser = "soapuser";
 $apiKey = "s0d3z1gn";
 
@@ -23,9 +25,8 @@ else
     $sessionId = $client->login($apiUser, $apiKey);
     if (isset($_POST['products']))
     {
-        echo "Ok";
-        get_products($client, $sessionId);
-        //get_categories($client, $sessionId);
+        //get_products($client, $sessionId);
+        get_categories($client, $sessionId);
         //get_customers($client, $sessionId);
         //categories_products_link($client, $sessionId);
         //get_stocks($client, $sessionId);

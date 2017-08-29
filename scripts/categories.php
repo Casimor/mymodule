@@ -18,13 +18,15 @@ function 	get_ids($client, $sessionId)
 function 	insert_categorie($info, $conn)
 {
 	$id_ext = $info['category_id'];
-	$label = $info['name'];
+	$label = str_replace("'", " ", $info['name']);
 	if ($info['parent_id'] == 1)
 		$fk_parent = 0;
 	else
 		$fk_parent = get_rowid($info['parent_id'], "llx_categorie", "id_ext", $conn);
 
 	$query = "INSERT INTO llx_categorie (id_ext, visible, fk_parent, label, type) VALUES ('$id_ext', 0, '$fk_parent', '$label', 0)";
+
+	var_dump($query);
 
 	querysql($conn, $query);
 }
@@ -36,8 +38,6 @@ function 	get_categories($client, $sessionId)
 	querysql($conn, "ALTER TABLE llx_categorie AUTO_INCREMENT = 1");
 	foreach ($ids as $index => $id)
 	{
-		if ($index == 0)
-			continue ;
 	  	$info = (array) $client->catalogCategoryInfo($sessionId, $id);
 		insert_categorie($info, $conn);
 	}

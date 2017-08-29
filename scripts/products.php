@@ -7,14 +7,19 @@ include_once 'functions.php';
 ** Fill llx_product
 */
 
-function 	insert_product($data, $conn)
+function    lipstick($str)
+{
+    $str = str_replace("é", "e", $str);
+    $str = str_replace("è", "e", $str);
+    $str = str_replace("'", " ", $str);
+    return $str;
+}
+
+function    insert_product($data, $conn)
 {
     $ref = $data['product_id'];
-    $ref_ext = $data['sku'];
-    $label = $data['name'];
-    if (preg_match("#'#", $label))
-        $label = addslashes($label);
-    //$url = $data['url_path'];
+    $ref_ext = lipstick($data['sku']);
+    $label = lipstick($data['name']);
 
     if(!isset($data['price']))
         $price = 0;
@@ -26,10 +31,8 @@ function 	insert_product($data, $conn)
     else
         $weight = (float) $data['weight'];
 
-    $query = "INSERT INTO llx_product (ref, ref_ext, label, price, weight, tosell, tobuy) VALUES ('$ref', '$ref_ext', :label, '$price', '$weight', 1, 1)";
-    
-    $req = $conn->prepare($query);
-    $req->execute(array('label' => $label));
+    $query = "INSERT INTO llx_product (ref, ref_ext, label, price, weight, tosell, tobuy) VALUES ('$ref', '$ref_ext', '$label', '$price', '$weight', 1, 1)";    
+    querysql($conn, $query);
 }
 
 function 	get_products($client, $sessionId)
@@ -37,17 +40,12 @@ function 	get_products($client, $sessionId)
 	$conn = connection_db("dolibarr");
 	$products = $client->catalogProductList($sessionId);
 	querysql($conn, "ALTER TABLE llx_product AUTO_INCREMENT = 1");
-    $i = 0;
 	foreach ($products as $productObj)
 	{
-        if ($i > 10)
-            break ;
         $product = (array) $productObj;
     	$info = $client->catalogProductInfo($sessionId, $product['product_id']);
         $info = (array) $info;
         insert_product($info, $conn);
-        $i += 1;
-
     }
 	$conn = null;
 }
