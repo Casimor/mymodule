@@ -36,7 +36,10 @@ function    get_rowid($id, $table, $where, $conn)
     $ret = $conn->prepare($query);
     $ret->execute();
     $result = $ret->fetchAll(PDO::FETCH_COLUMN, 0);
-    return $result[0];
+    if (empty($result))
+        return null;
+    else
+        return $result[0];
 }
 
 /*
@@ -54,7 +57,7 @@ function    querysql($conn, $query)
     }
     else
     {
-        echo "query success";
+        echo "query success\n";
         return 1;
     }
 }

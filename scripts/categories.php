@@ -12,6 +12,7 @@ function 	get_ids($client, $sessionId)
 	$root = (array) $client->catalogCategoryTree($sessionId);
   	$infos = (array) $client->catalogCategoryInfo($sessionId, $root['category_id']);
   	$ids = explode(',', $infos['all_children']);
+  	sort($ids);
   	return $ids;
 }
 
@@ -24,22 +25,35 @@ function 	insert_categorie($info, $conn)
 	else
 		$fk_parent = get_rowid($info['parent_id'], "llx_categorie", "id_ext", $conn);
 
-	$query = "INSERT INTO llx_categorie (id_ext, visible, fk_parent, label, type) VALUES ('$id_ext', 0, '$fk_parent', '$label', 0)";
+	if (!isset($fk_parent))
+		return $id_ext;
+	else
+	{
+		$query = "INSERT INTO llx_categorie (id_ext, visible, fk_parent, label, type) VALUES ('$id_ext', 0, '$fk_parent', '$label', 0)";
 
-	var_dump($query);
-
-	querysql($conn, $query);
+		querysql($conn, $query);
+		return 0;
+	}
 }
 
 function 	get_categories($client, $sessionId)
 {
+	$tab = array();
 	$ids = get_ids($client, $sessionId);
 	$conn = connection_db("dolibarr");
 	querysql($conn, "ALTER TABLE llx_categorie AUTO_INCREMENT = 1");
 	foreach ($ids as $index => $id)
 	{
+		if ($index == 0)
+			continue ;
 	  	$info = (array) $client->catalogCategoryInfo($sessionId, $id);
-		insert_categorie($info, $conn);
+		$tab[] = insert_categorie($info, $conn);
+	}
+	foreach ($tab as $index => $id) {
+		if ($id == 0)
+			continue ;
+		$info = (array) $client->catalogCategoryInfo($sessionId, $id);
+		insert_categorie($info, $conn); 
 	}
 	$conn = null;
 }
